@@ -3,15 +3,15 @@ import collections
 import math
 import os
 import re
+import pandas as pd
 import string
 import sys
-
-import pandas as pd
 import torch
+
 from datasets import load_dataset, Dataset
 from getpass import getpass
-from langchain.chat_models import ChatOpenAI
-from langchain.llms import OpenAI
+from langchain_community.chat_models import ChatOpenAI
+from langchain_community.llms import OpenAI
 from tqdm import tqdm
 from transformers import (
     AutoConfig,
