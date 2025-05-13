@@ -181,7 +181,22 @@ for i,task_info in tqdm(tasks_df.iterrows()):
     task, task_type = task_info['task'],task_info['type']
     print(task_info)
 
-    dataset = load_dataset(args.data_name_or_path, task, data_split)[data_split]
+    from datasets import Dataset, DatasetDict, load_dataset
+    local_data_path = "/content/SOCKET/experiments/zeroshot/SOCKET_download/SOCKET_DATA"
+
+    try:
+        dataset = load_dataset(args.data_name_or_path, task, data_split)[data_split]
+    except Exception as e:
+        if "#" in task:
+            local_task_path = os.path.join(local_data_path, task, f"{data_split}_text.txt")
+            if os.path.exists(local_task_path):
+                with open(local_task_path, 'r') as f:
+                    data = f.readlines()
+                dataset = Dataset.from_dict({"text": data})
+            else:
+                raise FileNotFoundError(f"File not found: {local_task_path}")
+        else:
+            raise e
     
     if task_type == 'PAIR' or task_type == 'CLS':
         ppt_template = "%s\nOptions:\n%s\nPlease only answer with the options. "%(task_info['question'], '\n'.join(eval(task_info['options'])))
